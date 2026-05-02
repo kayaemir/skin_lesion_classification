@@ -272,7 +272,7 @@ if not os.path.exists(model_path):
         os.makedirs(model_dir, exist_ok=True)
         
     file_id = "BURAYA_FILE_ID"
-    url = f"https://drive.google.com/uc?id={file_id}"
+    url = f"https://drive.google.com/file/d/1J91oqLsYLkP_eDzPWLQyqXNoXAqrhMdB/view?usp=sharing"
     
     try:
         gdown.download(url, model_path, quiet=False)
