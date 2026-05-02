@@ -20,10 +20,9 @@ import gdown
 
 # ── Page config ──────────────────────────────────────────────────
 st.set_page_config(
-    page_title="DermAI v2s — Cilt Lezyonu Tanı Asistanı",
+    page_title="Skin Lesion Diagnostic Assistant",
     page_icon="🔬",
     layout="wide",
-    initial_sidebar_state="expanded",
 )
 
 # ── Custom CSS ───────────────────────────────────────────────────
@@ -34,7 +33,7 @@ st.markdown("""
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     
     .main-header {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        background-color: #1a1a2e;
         padding: 2rem 2.5rem;
         border-radius: 16px;
         margin-bottom: 1.5rem;
@@ -45,18 +44,18 @@ st.markdown("""
     .main-header p  { margin: 0.4rem 0 0; opacity: 0.8; font-size: 0.95rem; }
     
     .metric-card {
-        background: linear-gradient(135deg, #0f3460, #533483);
+        background-color: #0f3460;
         padding: 1.2rem 1.5rem;
         border-radius: 12px;
         color: white;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(83,52,131,0.3);
+        box-shadow: 0 4px 15px rgba(15,52,96,0.3);
     }
     .metric-card .label { font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
     .metric-card .value { font-size: 1.8rem; font-weight: 700; margin-top: 0.3rem; }
     
     .alert-box {
-        background: linear-gradient(135deg, #d32f2f, #b71c1c);
+        background-color: #d32f2f;
         padding: 1.2rem 1.5rem;
         border-radius: 12px;
         color: white;
@@ -64,7 +63,7 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(211,47,47,0.35);
     }
     .safe-box {
-        background: linear-gradient(135deg, #2e7d32, #1b5e20);
+        background-color: #2e7d32;
         padding: 1.2rem 1.5rem;
         border-radius: 12px;
         color: white;
@@ -73,7 +72,7 @@ st.markdown("""
     }
     
     div[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        background-color: #1a1a2e;
     }
     div[data-testid="stSidebar"] label,
     div[data-testid="stSidebar"] .stMarkdown { color: #e0e0e0 !important; }
@@ -86,13 +85,13 @@ CLASS_NAMES = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
 NUM_CLASSES = len(CLASS_NAMES)
 
 DISEASE_INFO = {
-    "akiec": ("Aktinik Keratoz / SCC", "Güneşe maruz kalan bölgelerde oluşan, skuamöz hücreli karsinoma (SCC) dönüşme riski taşıyan prekanseröz lezyonlardır. Erken tedavi önemlidir.", True),
-    "bcc":   ("Bazal Hücreli Karsinom", "En sık görülen deri kanseri türüdür. Yavaş büyür, nadiren metastaz yapar ancak lokal destrüksiyon yapabilir. Cerrahi eksizyon altın standarttır.", True),
-    "bkl":   ("Benign Keratoz", "Seboreik keratoz, solar lentigo veya likenoid keratoz gibi iyi huylu keratinositik lezyonları kapsar. Tedavi genellikle kozmetik amaçlıdır.", False),
-    "df":    ("Dermatofibrom", "Sıklıkla alt ekstremitede görülen, sert, küçük, iyi huylu bir deri tümörüdür. Tedavi genellikle gerekmez.", False),
-    "mel":   ("Melanom", "⚠️ En tehlikeli deri kanseri türüdür. Erken evrede tespit edilirse tedavi edilebilir. Asimetri, düzensiz sınır, renk değişikliği ve çap artışına dikkat edilmelidir.", True),
-    "nv":    ("Melanositik Nevüs (Ben)", "Yaygın görülen, genellikle iyi huylu melanosit proliferasyonlarıdır. Değişim gösteren benler dikkatle takip edilmelidir.", False),
-    "vasc":  ("Vasküler Lezyon", "Anjiyom, anjiyokeratom veya piyojenik granülom gibi damar kaynaklı lezyonları kapsar. Çoğu iyi huyludur.", False),
+    "akiec": ("Actinic keratosis / SCC", "Premalignant lesions on sun-damaged skin that carry a risk of transforming into squamous cell carcinoma (SCC). Early treatment is important.", True),
+    "bcc":   ("Basal cell carcinoma", "The most common form of skin cancer. Grows slowly and rarely metastasizes, but can cause local destruction. Surgical excision is the gold standard.", True),
+    "bkl":   ("Benign keratosis", "Encompasses benign keratinocytic lesions such as seborrheic keratosis, solar lentigo, or lichenoid keratosis. Treatment is usually for cosmetic purposes.", False),
+    "df":    ("Dermatofibroma", "A small, firm, benign skin tumor often found on the lower extremities. Treatment is generally not required.", False),
+    "mel":   ("Melanoma", "⚠️ The most dangerous form of skin cancer. Treatable if caught early. Watch for asymmetry, border irregularity, color variations, and increasing diameter.", True),
+    "nv":    ("Melanocytic nevus (Mole)", "Common, generally benign proliferations of melanocytes. Moles that change over time should be carefully monitored.", False),
+    "vasc":  ("Vascular lesion", "Encompasses vascular lesions like angiomas, angiokeratomas, or pyogenic granulomas. Most are benign.", False),
 }
 
 MALIGNANT_CLASSES = {"akiec", "bcc", "mel"}
@@ -104,12 +103,12 @@ LOCALIZATIONS = [
     "unknown", "upper extremity",
 ]
 
-LOCALIZATION_TR = {
-    "abdomen": "Karın", "acral": "Akral", "back": "Sırt", "chest": "Göğüs",
-    "ear": "Kulak", "face": "Yüz", "foot": "Ayak", "genital": "Genital",
-    "hand": "El", "lower extremity": "Alt Ekstremite", "neck": "Boyun",
-    "scalp": "Kafa Derisi", "trunk": "Gövde", "unknown": "Bilinmiyor",
-    "upper extremity": "Üst Ekstremite",
+LOCALIZATION_EN = {
+    "abdomen": "Abdomen", "acral": "Acral", "back": "Back", "chest": "Chest",
+    "ear": "Ear", "face": "Face", "foot": "Foot", "genital": "Genital",
+    "hand": "Hand", "lower extremity": "Lower Extremity", "neck": "Neck",
+    "scalp": "Scalp", "trunk": "Trunk", "unknown": "Unknown",
+    "upper extremity": "Upper Extremity",
 }
 
 TRAIN_AGE_MAX = 85.0
@@ -215,142 +214,120 @@ def apply_clinical_thresholds(probs: np.ndarray):
     return pred_class, confidence, alert, alert_classes
 
 
-# ── Sidebar ──────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("## 🔬 DermAI v2s")
-    st.markdown("**EfficientNetV2-S Hybrid Model**")
-    st.divider()
-
-    st.markdown("### 📋 Hasta Bilgileri")
-    age = st.slider("Yaş", 0, 100, 50, key="age_slider")
-    sex = st.selectbox(
-        "Cinsiyet",
-        options=["female", "male", "unknown"],
-        format_func=lambda x: {"female": "Kadın", "male": "Erkek", "unknown": "Bilinmiyor"}[x],
-        key="sex_select",
-    )
-    localization = st.selectbox(
-        "Lezyon Bölgesi",
-        options=LOCALIZATIONS,
-        format_func=lambda x: LOCALIZATION_TR.get(x, x),
-        key="loc_select",
-    )
-
-    st.divider()
-    st.markdown("### 📸 Görüntü Yükle")
-    uploaded_file = st.file_uploader(
-        "Dermoskopik görüntü seçin",
-        type=["jpg", "jpeg", "png"],
-        key="img_uploader",
-    )
-
-    st.divider()
-    model_path = st.text_input(
-        "Model Dosya Yolu",
-        value="best_model_finetune-2.keras",
-        key="model_path_input",
-    )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div style="background-color: rgba(255, 193, 7, 0.15); border-left: 4px solid #ffc107; padding: 10px; border-radius: 4px; font-size: 0.85rem; color: #ffc107;">
-            <strong>⚠️ ÖNEMLİ UYARI:</strong> Bu uygulama medikal veya klinik kullanım için DEĞİLDİR. Sadece akademik araştırma ve prototip amaçlıdır. Hiçbir teşhis veya tıbbi karar için kullanılamaz.
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+# ── Settings ─────────────────────────────────────────────────────
+model_path = "best_model_finetune.keras"
 
 # ── Header ───────────────────────────────────────────────────────
 st.markdown(
     """
     <div class="main-header">
-        <h1>🔬 DermAI v2s — Cilt Lezyonu Tanı Asistanı</h1>
-        <p>EfficientNetV2-S + Klinik Metadata Hibrit Modeli &nbsp;|&nbsp; 7 Sınıf &nbsp;|&nbsp; Klinik Eşik Sistemi</p>
+        <h1>🔬 Skin Lesion Diagnostic Assistant</h1>
+        <p>EfficientNetV2-S + Clinical Metadata Hybrid Model &nbsp;|&nbsp; 7 Classes &nbsp;|&nbsp; Clinical Threshold System</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
+st.warning(
+    "**⚠️ IMPORTANT WARNING:** This application is NOT for medical or clinical use. "
+    "It is for academic research and prototyping purposes only. "
+    "It must not be used for any diagnostic or medical decisions."
+)
+
+# ── Inputs ───────────────────────────────────────────────────────
+st.markdown("### 📋 1. Patient Information")
+col_age, col_sex, col_loc = st.columns(3)
+with col_age:
+    age = st.number_input("Age", min_value=0, max_value=120, value=50, step=1, key="age_input")
+with col_sex:
+    sex = st.selectbox(
+        "Sex",
+        options=["female", "male", "unknown"],
+        format_func=lambda x: {"female": "Female", "male": "Male", "unknown": "Unknown"}[x],
+        key="sex_select",
+    )
+with col_loc:
+    localization = st.selectbox(
+        "Lesion Localization",
+        options=LOCALIZATIONS,
+        format_func=lambda x: LOCALIZATION_EN.get(x, x),
+        key="loc_select",
+    )
+
+st.markdown("### 📸 2. Image Source")
+img_file = st.file_uploader(
+    "📂 Select an image or take a photo (mobile)",
+    type=["jpg", "jpeg", "png"],
+    key="img_uploader",
+)
+
+
 # ── Load model ───────────────────────────────────────────────────
 if not os.path.exists(model_path):
-    st.warning(f"⚠️ `{model_path}` bulunamadı. Google Drive üzerinden indiriliyor, lütfen bekleyin...")
+    st.warning(f"⚠️ `{model_path}` not found. Downloading via Google Drive, please wait...")
     
-    # Hedef klasör yoksa oluştur (örn. model/ yoluna indirmek istenirse)
+    # Create target directory if it doesn't exist
     model_dir = os.path.dirname(model_path)
     if model_dir and not os.path.exists(model_dir):
         os.makedirs(model_dir, exist_ok=True)
         
-    # Google Drive dosya ID'sini buraya yaz
     file_id = "BURAYA_FILE_ID"
     url = f"https://drive.google.com/uc?id={file_id}"
     
     try:
         gdown.download(url, model_path, quiet=False)
         if not os.path.exists(model_path):
-            st.error("❌ İndirme başarısız oldu. Lütfen dosya ID'sini ve internet bağlantınızı kontrol edin.")
+            st.error("❌ Download failed. Please check the file ID and your internet connection.")
             st.stop()
-        st.success("✅ Model başarıyla indirildi!")
+        st.success("✅ Model downloaded successfully!")
     except Exception as e:
-        st.error(f"❌ İndirme sırasında hata oluştu: {e}")
+        st.error(f"❌ Error during download: {e}")
         st.stop()
 
-with st.spinner("🧠 Model yükleniyor… (ilk açılışta biraz zaman alabilir)"):
+with st.spinner("🧠 Loading model… (might take a while on first launch)"):
     model, load_time = load_model(model_path)
 
 # Detect actual image size from model input
 actual_img_size = model.inputs[0].shape[1] or IMG_SIZE
 meta_dim = model.inputs[1].shape[1] or 18
 
-# ── Model info cards ─────────────────────────────────────────────
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.markdown(
-        f'<div class="metric-card"><div class="label">Model Yükleme Süresi</div>'
-        f'<div class="value">{load_time:.2f}s</div></div>',
-        unsafe_allow_html=True,
-    )
-with col2:
-    st.markdown(
-        f'<div class="metric-card"><div class="label">Görüntü Boyutu</div>'
-        f'<div class="value">{actual_img_size}×{actual_img_size}</div></div>',
-        unsafe_allow_html=True,
-    )
-with col3:
-    st.markdown(
-        f'<div class="metric-card"><div class="label">Metadata Boyutu</div>'
-        f'<div class="value">{meta_dim}</div></div>',
-        unsafe_allow_html=True,
-    )
-with col4:
-    st.markdown(
-        f'<div class="metric-card"><div class="label">Sınıf Sayısı</div>'
-        f'<div class="value">{NUM_CLASSES}</div></div>',
-        unsafe_allow_html=True,
-    )
+# Model info is now displayed in the top-right menu (About section).
 
-st.markdown("")
+# ── Footer Helper ────────────────────────────────────────────────
+def render_footer():
+    st.markdown("---")
+    
+    with st.expander("ℹ️ About the Model"):
+        st.markdown(f"""
+        - **Architecture:** EfficientNetV2-S + Clinical Metadata
+        - **Image Input Size:** {IMG_SIZE}×{IMG_SIZE} pixels
+        - **Metadata Features:** 18 vector size
+        - **Supported Classes ({NUM_CLASSES}):** Actinic keratosis / SCC, Basal cell carcinoma, Benign keratosis, Dermatofibroma, Melanoma, Melanocytic nevus, Vascular lesion
+        - **Model Load Time:** {load_time:.2f} seconds
+        """)
 
 # ── Main content ─────────────────────────────────────────────────
-if uploaded_file is None:
-    st.info("👈 Sol panelden bir dermoskopik görüntü yükleyin ve hasta bilgilerini girin.")
+if img_file is None:
+    st.info("👆 Please provide an image (upload or take a photo) to get a diagnosis.")
+    render_footer()
     st.stop()
 
 # Show uploaded image
+st.markdown("---")
 col_img, col_result = st.columns([1, 1.5])
 
 with col_img:
-    st.markdown("### 🖼️ Yüklenen Görüntü")
-    st.image(uploaded_file, use_container_width=True)
+    st.markdown("### 🖼️ Input Image")
+    st.image(img_file, use_container_width=True)
 
-    st.markdown("**Hasta Bilgileri**")
-    st.markdown(f"- **Yaş:** {age}")
-    sex_tr = {'female': 'Kadın', 'male': 'Erkek', 'unknown': 'Bilinmiyor'}.get(sex, sex)
-    st.markdown(f"- **Cinsiyet:** {sex_tr}")
-    st.markdown(f"- **Bölge:** {LOCALIZATION_TR.get(localization, localization)}")
+    st.markdown("**Patient Information**")
+    st.markdown(f"- **Age:** {age}")
+    sex_tr = {'female': 'Female', 'male': 'Male', 'unknown': 'Unknown'}.get(sex, sex)
+    st.markdown(f"- **Sex:** {sex_tr}")
+    st.markdown(f"- **Localization:** {LOCALIZATION_EN.get(localization, localization)}")
 
 # Run prediction
-img_arr = preprocess_image(uploaded_file, actual_img_size)
+img_arr = preprocess_image(img_file, actual_img_size)
 meta_arr = encode_metadata(float(age), sex, localization)
 
 # Pad/slice metadata if model expects different dim
@@ -369,10 +346,10 @@ pred_class, confidence, alert, alert_classes = apply_clinical_thresholds(probs)
 disease_name, description, is_malignant = DISEASE_INFO[pred_class]
 
 with col_result:
-    st.markdown("### 📊 Tanı Sonuçları")
+    st.markdown("### 📊 Diagnostic Results")
 
     # Prediction time
-    st.caption(f"⏱️ Tahmin süresi: **{pred_time:.3f}s**")
+    st.caption(f"⏱️ Prediction time: **{pred_time:.3f}s**")
 
     # Clinical alert or safe result
     if alert:
@@ -381,28 +358,28 @@ with col_result:
         )
         st.markdown(
             f'<div class="alert-box">'
-            f"⚠️ <strong>KLİNİK UYARI</strong> — Malign sınıf(lar) eşik değerini aştı (%30):<br>"
+            f"⚠️ <strong>CLINICAL ALERT</strong> — Malignant class(es) exceeded the threshold (30%):<br>"
             f"{alert_text}</div>",
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
             f'<div class="safe-box">'
-            f"✅ <strong>Malign eşik aşılmadı</strong> — Tüm malign sınıf olasılıkları %30 altında.</div>",
+            f"✅ <strong>Below malignant threshold</strong> — All malignant class probabilities are under 30%.</div>",
             unsafe_allow_html=True,
         )
 
     # Predicted class
-    st.markdown(f"**Tahmin:** `{pred_class}` — **{disease_name}**")
-    st.markdown(f"**Güven:** `{confidence:.2%}`")
-    st.markdown(f"**Risk:** {'🔴 Malign' if is_malignant else '🟢 Benign'}")
+    st.markdown(f"**Prediction:** `{pred_class}` — **{disease_name}**")
+    st.markdown(f"**Confidence:** `{confidence:.2%}`")
+    st.markdown(f"**Risk:** {'🔴 Malignant' if is_malignant else '🟢 Benign'}")
 
     st.divider()
-    st.markdown(f"**Açıklama:** {description}")
+    st.markdown(f"**Description:** {description}")
 
 # ── Probability distribution ────────────────────────────────────
 st.markdown("---")
-st.markdown("### 📈 Olasılık Dağılımı")
+st.markdown("### 📈 Probability Distribution")
 
 html_bars = ""
 # Sort probabilities descending for better visualization
@@ -414,11 +391,11 @@ for i in sorted_indices:
     d_name = DISEASE_INFO[cls][0]
     
     if cls == pred_class:
-        color = "linear-gradient(90deg, #e94560, #c0392b)"  # Red for predicted
+        color = "#e94560"  # Red for predicted
     elif cls in MALIGNANT_CLASSES:
-        color = "linear-gradient(90deg, #f39c12, #d35400)"  # Orange for malignant
+        color = "#f39c12"  # Orange for malignant
     else:
-        color = "linear-gradient(90deg, #3498db, #2980b9)"  # Blue for benign
+        color = "#3498db"  # Blue for benign
         
     html_bars += f'''
     <div style="margin-bottom: 12px; font-family: 'Inter', sans-serif;">
@@ -428,7 +405,7 @@ for i in sorted_indices:
         </div>
         <div style="width: 100%; background-color: rgba(128, 128, 128, 0.15); border-radius: 6px; height: 22px; position: relative; overflow: hidden;">
             <div style="width: {prob*100}%; background: {color}; height: 100%; border-radius: 6px; transition: width 0.5s ease-in-out;"></div>
-            <div style="position: absolute; left: 30%; top: 0; bottom: 0; width: 2px; background-color: rgba(233, 69, 96, 0.8); z-index: 10; box-shadow: 0 0 4px rgba(233,69,96,0.5);" title="%30 Klinik Eşik"></div>
+            <div style="position: absolute; left: 30%; top: 0; bottom: 0; width: 2px; background-color: rgba(233, 69, 96, 0.8); z-index: 10; box-shadow: 0 0 4px rgba(233,69,96,0.5);" title="30% Clinical Threshold"></div>
         </div>
     </div>
     '''
@@ -439,18 +416,14 @@ st.markdown(html_bars, unsafe_allow_html=True)
 st.markdown(
     """
     <div style="display:flex; gap:1.5rem; justify-content:center; margin-top:1.5rem; font-size:0.85rem; color:#888;">
-        <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; border-radius:50%; background:#e94560;"></div> Tahmin edilen sınıf</span>
-        <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; border-radius:50%; background:#f39c12;"></div> Malign sınıf</span>
-        <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; border-radius:50%; background:#3498db;"></div> Benign sınıf</span>
-        <span style="display:flex; align-items:center; gap:5px;"><div style="width:2px; height:14px; background:rgba(233, 69, 96, 0.8);"></div> %30 klinik eşik</span>
+        <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; border-radius:50%; background:#e94560;"></div> Predicted class</span>
+        <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; border-radius:50%; background:#f39c12;"></div> Malignant class</span>
+        <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; border-radius:50%; background:#3498db;"></div> Benign class</span>
+        <span style="display:flex; align-items:center; gap:5px;"><div style="width:2px; height:14px; background:rgba(233, 69, 96, 0.8);"></div> 30% clinical threshold</span>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
 # ── Footer ───────────────────────────────────────────────────────
-st.markdown("---")
-st.caption(
-    "⚕️ Bu araç yalnızca araştırma amaçlıdır ve tıbbi tanı yerine geçmez. "
-    "Kesin tanı için bir dermatolog veya onkologa başvurunuz."
-)
+render_footer()
