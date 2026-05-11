@@ -272,7 +272,17 @@ if not os.path.exists(model_path):
         
     # Load file_id from Streamlit secrets for security
     try:
-        file_id = st.secrets["GOOGLE_DRIVE_FILE_ID"]
+        raw_id = st.secrets["GOOGLE_DRIVE_FILE_ID"]
+        # Robustly extract ID if a full URL was pasted
+        if "drive.google.com" in raw_id:
+            if "/d/" in raw_id:
+                file_id = raw_id.split("/d/")[1].split("/")[0]
+            elif "id=" in raw_id:
+                file_id = raw_id.split("id=")[1].split("&")[0]
+            else:
+                file_id = raw_id # Fallback
+        else:
+            file_id = raw_id
     except KeyError:
         st.error("Error: `GOOGLE_DRIVE_FILE_ID` not found in secrets. Please add it to `.streamlit/secrets.toml`.")
         st.stop()
