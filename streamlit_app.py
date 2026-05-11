@@ -270,7 +270,13 @@ if not os.path.exists(model_path):
     if model_dir and not os.path.exists(model_dir):
         os.makedirs(model_dir, exist_ok=True)
         
-    file_id = "BURAYA_FILE_ID"
+    # Load file_id from Streamlit secrets for security
+    try:
+        file_id = st.secrets["GOOGLE_DRIVE_FILE_ID"]
+    except KeyError:
+        st.error("Error: `GOOGLE_DRIVE_FILE_ID` not found in secrets. Please add it to `.streamlit/secrets.toml`.")
+        st.stop()
+        
     url = f"https://drive.google.com/uc?id={file_id}"
     
     try:
