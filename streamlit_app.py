@@ -21,7 +21,6 @@ import gdown
 # ── Page config ──────────────────────────────────────────────────
 st.set_page_config(
     page_title="Skin Lesion Diagnostic Assistant",
-    page_icon="🔬",
     layout="wide",
 )
 
@@ -89,7 +88,7 @@ DISEASE_INFO = {
     "bcc":   ("Basal cell carcinoma", "The most common form of skin cancer. Grows slowly and rarely metastasizes, but can cause local destruction. Surgical excision is the gold standard.", True),
     "bkl":   ("Benign keratosis", "Encompasses benign keratinocytic lesions such as seborrheic keratosis, solar lentigo, or lichenoid keratosis. Treatment is usually for cosmetic purposes.", False),
     "df":    ("Dermatofibroma", "A small, firm, benign skin tumor often found on the lower extremities. Treatment is generally not required.", False),
-    "mel":   ("Melanoma", "⚠️ The most dangerous form of skin cancer. Treatable if caught early. Watch for asymmetry, border irregularity, color variations, and increasing diameter.", True),
+    "mel":   ("Melanoma", "The most dangerous form of skin cancer. Treatable if caught early. Watch for asymmetry, border irregularity, color variations, and increasing diameter.", True),
     "nv":    ("Melanocytic nevus (Mole)", "Common, generally benign proliferations of melanocytes. Moles that change over time should be carefully monitored.", False),
     "vasc":  ("Vascular lesion", "Encompasses vascular lesions like angiomas, angiokeratomas, or pyogenic granulomas. Most are benign.", False),
 }
@@ -221,7 +220,7 @@ model_path = "best_model_finetune.keras"
 st.markdown(
     """
     <div class="main-header">
-        <h1>🔬 Skin Lesion Diagnostic Assistant</h1>
+        <h1>Skin Lesion Diagnostic Assistant</h1>
         <p>EfficientNetV2-S + Clinical Metadata Hybrid Model &nbsp;|&nbsp; 7 Classes &nbsp;|&nbsp; Clinical Threshold System</p>
     </div>
     """,
@@ -229,13 +228,13 @@ st.markdown(
 )
 
 st.warning(
-    "**⚠️ IMPORTANT WARNING:** This application is NOT for medical or clinical use. "
+    "**IMPORTANT WARNING:** This application is NOT for medical or clinical use. "
     "It is for academic research and prototyping purposes only. "
     "It must not be used for any diagnostic or medical decisions."
 )
 
 # ── Inputs ───────────────────────────────────────────────────────
-st.markdown("### 📋 1. Patient Information")
+st.markdown("### 1. Patient Information")
 col_age, col_sex, col_loc = st.columns(3)
 with col_age:
     age = st.number_input("Age", min_value=0, max_value=120, value=50, step=1, key="age_input")
@@ -254,9 +253,9 @@ with col_loc:
         key="loc_select",
     )
 
-st.markdown("### 📸 2. Image Source")
+st.markdown("### 2. Image Source")
 img_file = st.file_uploader(
-    "📂 Select an image or take a photo (mobile)",
+    "Select an image or take a photo (mobile)",
     type=["jpg", "jpeg", "png"],
     key="img_uploader",
 )
@@ -264,7 +263,7 @@ img_file = st.file_uploader(
 
 # ── Load model ───────────────────────────────────────────────────
 if not os.path.exists(model_path):
-    st.warning(f"⚠️ `{model_path}` not found. Downloading via Google Drive, please wait...")
+    st.warning(f"`{model_path}` not found. Downloading via Google Drive, please wait...")
     
     # Create target directory if it doesn't exist
     model_dir = os.path.dirname(model_path)
@@ -272,19 +271,19 @@ if not os.path.exists(model_path):
         os.makedirs(model_dir, exist_ok=True)
         
     file_id = "BURAYA_FILE_ID"
-    url = f"https://drive.google.com/file/d/1J91oqLsYLkP_eDzPWLQyqXNoXAqrhMdB/view?usp=sharing"
+    url = f"https://drive.google.com/uc?id={file_id}"
     
     try:
         gdown.download(url, model_path, quiet=False)
         if not os.path.exists(model_path):
-            st.error("❌ Download failed. Please check the file ID and your internet connection.")
+            st.error("Download failed. Please check the file ID and your internet connection.")
             st.stop()
-        st.success("✅ Model downloaded successfully!")
+        st.success("Model downloaded successfully!")
     except Exception as e:
-        st.error(f"❌ Error during download: {e}")
+        st.error(f"Error during download: {e}")
         st.stop()
 
-with st.spinner("🧠 Loading model… (might take a while on first launch)"):
+with st.spinner("Loading model... (might take a while on first launch)"):
     model, load_time = load_model(model_path)
 
 # Detect actual image size from model input
@@ -297,7 +296,7 @@ meta_dim = model.inputs[1].shape[1] or 18
 def render_footer():
     st.markdown("---")
     
-    with st.expander("ℹ️ About the Model"):
+    with st.expander("About the Model"):
         st.markdown(f"""
         - **Architecture:** EfficientNetV2-S + Clinical Metadata
         - **Image Input Size:** {IMG_SIZE}×{IMG_SIZE} pixels
@@ -308,7 +307,7 @@ def render_footer():
 
 # ── Main content ─────────────────────────────────────────────────
 if img_file is None:
-    st.info("👆 Please provide an image (upload or take a photo) to get a diagnosis.")
+    st.info("Please provide an image (upload or take a photo) to get a diagnosis.")
     render_footer()
     st.stop()
 
@@ -317,7 +316,7 @@ st.markdown("---")
 col_img, col_result = st.columns([1, 1.5])
 
 with col_img:
-    st.markdown("### 🖼️ Input Image")
+    st.markdown("### Input Image")
     st.image(img_file, use_container_width=True)
 
     st.markdown("**Patient Information**")
@@ -346,10 +345,10 @@ pred_class, confidence, alert, alert_classes = apply_clinical_thresholds(probs)
 disease_name, description, is_malignant = DISEASE_INFO[pred_class]
 
 with col_result:
-    st.markdown("### 📊 Diagnostic Results")
+    st.markdown("### Diagnostic Results")
 
     # Prediction time
-    st.caption(f"⏱️ Prediction time: **{pred_time:.3f}s**")
+    st.caption(f"Prediction time: **{pred_time:.3f}s**")
 
     # Clinical alert or safe result
     if alert:
@@ -358,28 +357,28 @@ with col_result:
         )
         st.markdown(
             f'<div class="alert-box">'
-            f"⚠️ <strong>CLINICAL ALERT</strong> — Malignant class(es) exceeded the threshold (30%):<br>"
+            f"<strong>CLINICAL ALERT</strong> — Malignant class(es) exceeded the threshold (30%):<br>"
             f"{alert_text}</div>",
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
             f'<div class="safe-box">'
-            f"✅ <strong>Below malignant threshold</strong> — All malignant class probabilities are under 30%.</div>",
+            f"<strong>Below malignant threshold</strong> — All malignant class probabilities are under 30%.</div>",
             unsafe_allow_html=True,
         )
 
     # Predicted class
     st.markdown(f"**Prediction:** `{pred_class}` — **{disease_name}**")
     st.markdown(f"**Confidence:** `{confidence:.2%}`")
-    st.markdown(f"**Risk:** {'🔴 Malignant' if is_malignant else '🟢 Benign'}")
+    st.markdown(f"**Risk:** {'Malignant' if is_malignant else 'Benign'}")
 
     st.divider()
     st.markdown(f"**Description:** {description}")
 
 # ── Probability distribution ────────────────────────────────────
 st.markdown("---")
-st.markdown("### 📈 Probability Distribution")
+st.markdown("### Probability Distribution")
 
 html_bars = ""
 # Sort probabilities descending for better visualization
@@ -427,3 +426,4 @@ st.markdown(
 
 # ── Footer ───────────────────────────────────────────────────────
 render_footer()
+
