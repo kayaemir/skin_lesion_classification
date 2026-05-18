@@ -1,11 +1,10 @@
 """
-EfficientNetV2-S Hybrid Model — Skin Lesion Diagnostic Assistant (v2sapp)
-===================================================================
+EfficientNetV2-S Hybrid Model — Skin Lesion Diagnostic Assistant
 Streamlit interface for the EfficientNetV2-S based hybrid skin lesion
 classification model. Shows model load time prominently.
 
 Usage:
-    streamlit run v2sapp.py
+    streamlit run streamlit_app.py
 """
 
 import os
@@ -18,13 +17,13 @@ import numpy as np
 from PIL import Image
 import gdown
 
-# ── Page config ──────────────────────────────────────────────────
+# Page config
 st.set_page_config(
     page_title="Skin Lesion Diagnostic Assistant",
     layout="wide",
 )
 
-# ── Custom CSS ───────────────────────────────────────────────────
+# Custom CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -78,7 +77,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Constants ────────────────────────────────────────────────────
+# Constants
 IMG_SIZE = 384
 CLASS_NAMES = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
 NUM_CLASSES = len(CLASS_NAMES)
@@ -114,7 +113,9 @@ TRAIN_AGE_MAX = 85.0
 TRAIN_AGE_MEDIAN = 50.0
 
 
-# ── Model loading ───────────────────────────────────────────────
+
+
+# Model loading
 @st.cache_resource
 def load_model(model_path: str):
     """Load the .keras model and return (model, load_time_seconds)."""
@@ -164,7 +165,7 @@ def load_model(model_path: str):
     return model, load_time
 
 
-# ── Preprocessing helpers ────────────────────────────────────────
+# Preprocessing helpers
 def preprocess_image(uploaded_file, target_size: int):
     """Return a (1, H, W, 3) float32 numpy array."""
     img = Image.open(uploaded_file).convert("RGB")
@@ -213,10 +214,10 @@ def apply_clinical_thresholds(probs: np.ndarray):
     return pred_class, confidence, alert, alert_classes
 
 
-# ── Settings ─────────────────────────────────────────────────────
+# Settings
 model_path = "best_model_finetune.keras"
 
-# ── Header ───────────────────────────────────────────────────────
+# Header
 st.markdown(
     """
     <div class="main-header">
@@ -233,7 +234,7 @@ st.warning(
     "It must not be used for any diagnostic or medical decisions."
 )
 
-# ── Inputs ───────────────────────────────────────────────────────
+# Inputs
 st.markdown("### 1. Patient Information")
 col_age, col_sex, col_loc = st.columns(3)
 with col_age:
@@ -261,7 +262,7 @@ img_file = st.file_uploader(
 )
 
 
-# ── Load model ───────────────────────────────────────────────────
+# Load model
 if not os.path.exists(model_path):
     st.warning(f"`{model_path}` not found. Downloading via Google Drive, please wait...")
     
@@ -308,7 +309,7 @@ meta_dim = model.inputs[1].shape[1] or 18
 
 # Model info is now displayed in the top-right menu (About section).
 
-# ── Footer Helper ────────────────────────────────────────────────
+# Footer Helper
 def render_footer():
     st.markdown("---")
     
@@ -319,13 +320,33 @@ def render_footer():
         - **Metadata Features:** 18 vector size
         - **Supported Classes ({NUM_CLASSES}):** Actinic keratosis / SCC, Basal cell carcinoma, Benign keratosis, Dermatofibroma, Melanoma, Melanocytic nevus, Vascular lesion
         - **Model Load Time:** {load_time:.2f} seconds
+        - **Training Dataset:** HAM10000
+        ---
+        **Licenses & Attribution**
+        - HAM10000 dataset: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — Tschandl et al., 2018
+        - EfficientNetV2: Tan & Le, 2021 — Apache 2.0
+        - MobileNetV3: Howard et al., 2019 — Apache 2.0
+        - TensorFlow / Keras: Apache 2.0
         """)
 
-# ── Main content ─────────────────────────────────────────────────
+    st.markdown(
+        """
+        <div style="text-align:center; color:#555; font-size:0.78rem; margin-top:1.5rem;">
+            &copy; 2026 Graduation Project &nbsp;|&nbsp;
+            Skin Lesion Diagnostic Assistant &nbsp;|&nbsp;
+            For academic research purposes only &nbsp;|&nbsp;
+            Not for clinical use
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# Main content
 if img_file is None:
     st.info("Please provide an image (upload or take a photo) to get a diagnosis.")
     render_footer()
     st.stop()
+
 
 # Show uploaded image
 st.markdown("---")
@@ -392,7 +413,7 @@ with col_result:
     st.divider()
     st.markdown(f"**Description:** {description}")
 
-# ── Probability distribution ────────────────────────────────────
+# Probability distribution
 st.markdown("---")
 st.markdown("### Probability Distribution")
 
@@ -427,7 +448,7 @@ for i in sorted_indices:
 
 st.markdown(html_bars, unsafe_allow_html=True)
 
-# ── Legend ───────────────────────────────────────────────────────
+# Legend
 st.markdown(
     """
     <div style="display:flex; gap:1.5rem; justify-content:center; margin-top:1.5rem; font-size:0.85rem; color:#888;">
@@ -440,6 +461,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── Footer ───────────────────────────────────────────────────────
+# Footer
 render_footer()
+
+
 
