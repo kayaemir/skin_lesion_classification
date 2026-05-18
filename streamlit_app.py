@@ -455,17 +455,19 @@ def render_footer():
 
     st.markdown(
         """
-        <div style="text-align:center; color:#555; font-size:0.78rem; margin-top:1.5rem;">
-            &copy; 2026 Graduation Project &nbsp;|&nbsp;
-            Skin Lesion Diagnostic Assistant &nbsp;|&nbsp;
-            For academic research purposes only &nbsp;|&nbsp;
-            Not for clinical use
-            <br><br>
+        <div style="display:flex; align-items:center; justify-content:center;
+                    position:relative; color:#555; font-size:0.78rem; margin-top:1.5rem;">
+            <span>
+                &copy; 2026 Graduation Project &nbsp;|&nbsp;
+                Skin Lesion Diagnostic Assistant &nbsp;|&nbsp;
+                For academic research purposes only &nbsp;|&nbsp;
+                Not for clinical use
+            </span>
             <a href="https://github.com/kayaemir/skin_lesion_classification"
                target="_blank"
-               style="display:inline-flex; align-items:center; gap:6px; color:#888;
-                      text-decoration:none; font-size:0.82rem;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+               title="GitHub Repository"
+               style="position:absolute; right:0; color:#888; text-decoration:none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                      viewBox="0 0 24 24" fill="#888">
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385
                            .6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235
@@ -481,7 +483,6 @@ def render_footer():
                            2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57
                            A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
                 </svg>
-                kayaemir / skin_lesion_classification
             </a>
         </div>
         """,
@@ -620,4 +621,5 @@ st.markdown(
 
 # Footer
 render_footer()
+
 
