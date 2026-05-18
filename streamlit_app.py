@@ -325,7 +325,6 @@ def render_footer():
         **Licenses & Attribution**
         - HAM10000 dataset: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — Tschandl et al., 2018
         - EfficientNetV2: Tan & Le, 2021 — Apache 2.0
-        - MobileNetV3: Howard et al., 2019 — Apache 2.0
         - TensorFlow / Keras: Apache 2.0
         """)
 
