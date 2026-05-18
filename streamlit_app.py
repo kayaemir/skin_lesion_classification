@@ -442,12 +442,11 @@ def render_footer():
         - **Metadata Features:** 18 vector size
         - **Supported Classes ({NUM_CLASSES}):** Actinic keratosis / SCC, Basal cell carcinoma, Benign keratosis, Dermatofibroma, Melanoma, Melanocytic nevus, Vascular lesion
         - **Model Load Time:** {load_time:.2f} seconds
-        - **Training Dataset:** HAM10000 + ISIC 2019
+        - **Training Dataset:** HAM10000
         - **Image Validation:** MobileNetV3Small (ImageNet)
         ---
         **Licenses & Attribution**
         - HAM10000 dataset: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — Tschandl et al., 2018
-        - ISIC 2019 dataset: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — ISIC Archive
         - EfficientNetV2: Tan & Le, 2021 — Apache 2.0
         - MobileNetV3: Howard et al., 2019 — Apache 2.0
         - TensorFlow / Keras: Apache 2.0
